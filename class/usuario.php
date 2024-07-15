@@ -47,11 +47,9 @@ class Usuario
 		$this->dtcadastro = $value;
 	}
 
-	public function loadById($id)
+	public function verificaResult($results) 
 	{
-		$sql = new Sql;
-		$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(":ID"=>$id));
-
+		
 		if (count($results) > 0)
 		{
 			$row = $results[0];
@@ -60,6 +58,26 @@ class Usuario
 			$this->setDessenha($row["dessenha"]);
 			$this->setDtcadastro(new DateTime($row["dtcadastro"]));
 		}
+		else
+		{
+			throw new Exception("Login e/ou senha inválido");
+			
+		}
+	}
+
+	public function loadById($id)
+	{
+		$sql = new Sql;
+		$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(":ID"=>$id));
+		$this->verificaResult($results);
+	}
+
+	public function login($login,$senha)
+	{
+		$sql = new Sql;
+		$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(":LOGIN"=>$login,":PASSWORD"=>$senha));
+		$this->verificaResult($results);
+
 	}
 
 	public function __toString()
@@ -71,6 +89,24 @@ class Usuario
 			"dtcadastro"=>$this->getDtcadastro()->format("d/m/Y H:i:s")
 		));
 	}
+
+	
+	public static function getList()
+	{
+		$sql = new Sql;
+		return $sql->select("SELECT * FROM tb_usuarios ORDER BY deslogin");
+
+	}
+
+	public static function search($login)
+	{
+		$sql = new Sql;
+		return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :LOGIN ORDER BY deslogin", 
+			array(":LOGIN"=>"%".$login."%"));
+
+	}
+
+	
 }
 
 ?>
