@@ -48,11 +48,11 @@ $usuario->update($nome,$senha);
 echo $usuario;*/
 
 //faz exclusão de registro
-$id = 13; 
+$id = 2; 
 $usuario = new Usuario();
 $usuario->loadById($id);
 $usuario->delete();
-echo "Usuário excluído com sucesso!";
+echo $usuario;
 
 
 ?>

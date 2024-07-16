@@ -129,6 +129,12 @@ class Usuario
 		
 		$sql->select("CALL sp_usuarios_delete(:ID)", array(
 			":ID"=>$this->getIdusuario()));
+
+		$this->setIdusuario(0);
+		$this->setDeslogin("");
+		$this->setDessenha("");
+		$this->setDtcadastro(new DateTime());
+
 	}
 
 
