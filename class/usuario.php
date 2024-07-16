@@ -47,16 +47,16 @@ class Usuario
 		$this->dtcadastro = $value;
 	}
 
-	public function verificaResult($results) 
+	
+	public function setDados($dados) 
 	{
 		
-		if (count($results) > 0)
+		if (count($dados) > 0)
 		{
-			$row = $results[0];
-			$this->setIdusuario($row["idusuario"]);
-			$this->setDeslogin($row["deslogin"]);
-			$this->setDessenha($row["dessenha"]);
-			$this->setDtcadastro(new DateTime($row["dtcadastro"]));
+			$this->setIdusuario($dados["idusuario"]);
+			$this->setDeslogin($dados["deslogin"]);
+			$this->setDessenha($dados["dessenha"]);
+			$this->setDtcadastro(new DateTime($dados["dtcadastro"]));
 		}
 		else
 		{
@@ -69,28 +69,18 @@ class Usuario
 	{
 		$sql = new Sql;
 		$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(":ID"=>$id));
-		$this->verificaResult($results);
+		$this->setDados($results[0]);
 	}
 
 	public function login($login,$senha)
 	{
 		$sql = new Sql;
 		$results = $sql->select("SELECT * FROM tb_usuarios WHERE deslogin = :LOGIN AND dessenha = :PASSWORD", array(":LOGIN"=>$login,":PASSWORD"=>$senha));
-		$this->verificaResult($results);
+		$this->setDados($results[0]);
 
 	}
 
-	public function __toString()
-	{
-		return json_encode(array(
-			"idusuario"=>$this->getIdusuario(),
-			"deslogin"=>$this->getDeslogin(),
-			"dessenha"=>$this->getDessenha(),
-			"dtcadastro"=>$this->getDtcadastro()->format("d/m/Y H:i:s")
-		));
-	}
 
-	
 	public static function getList()
 	{
 		$sql = new Sql;
@@ -106,7 +96,51 @@ class Usuario
 
 	}
 
-	
-}
+	public function insert($login,$password)
+	{
+		$this->setDeslogin($login);
+		$this->setDessenha($password);
 
+		$sql = new Sql;
+		
+		$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+			":LOGIN"=>$this->getDeslogin(),":PASSWORD"=>$this->getDessenha()));
+
+		$this->setDados($results[0]);
+
+	}
+
+	public function update($login,$password)
+	{
+		$this->setDeslogin($login);
+		$this->setDessenha($password);
+
+		$sql = new Sql;
+		
+		$results = $sql->select("CALL sp_usuarios_update(:ID, :LOGIN, :PASSWORD)", array(
+			":ID"=>$this->getIdusuario(),":LOGIN"=>$this->getDeslogin(),":PASSWORD"=>$this->getDessenha()));
+
+		$this->setDados($results[0]);
+	}
+
+	public function delete()
+	{
+		$sql = new Sql;
+		
+		$sql->select("CALL sp_usuarios_delete(:ID)", array(
+			":ID"=>$this->getIdusuario()));
+	}
+
+
+	public function __toString()
+	{
+		return json_encode(array(
+			"idusuario"=>$this->getIdusuario(),
+			"deslogin"=>$this->getDeslogin(),
+			"dessenha"=>$this->getDessenha(),
+			"dtcadastro"=>$this->getDtcadastro()->format("d/m/Y H:i:s")
+		));
+	}
+
+}
 ?>

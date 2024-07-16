@@ -25,10 +25,34 @@ require_once("config.php");
 //echo json_encode($login);
 
 //carrega um usuário usando o login e a senha
-$usuario = "Maria Lima";
-$senha = "*%*%*%";
-$sql = new Usuario();
-$sql->login($usuario,$senha);
-echo $sql;
+//$usuario = "Maria Lima";
+//$senha = "*%*%*%";
+//$sql = new Usuario();
+//$sql->login($usuario,$senha);
+//echo $sql;
+
+//inclui um novo usuário usando o login e a senha
+/*$nome = "Alexa da Amazon";
+$senha = "9848774";
+$usuario = new Usuario();
+$usuario->insert($nome,$senha);
+echo $usuario;*/
+
+//faz atualização de registro
+/*$nome = "Lucas da Silva 3";
+$senha = "977115";
+$id = 10; 
+$usuario = new Usuario();
+$usuario->loadById($id);
+$usuario->update($nome,$senha);
+echo $usuario;*/
+
+//faz exclusão de registro
+$id = 13; 
+$usuario = new Usuario();
+$usuario->loadById($id);
+$usuario->delete();
+echo "Usuário excluído com sucesso!";
+
 
 ?>
